@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+// import "github.com/golang/protobuf/ptypes/any";
+
+import "google/protobuf/any.proto";
+
+package colly;
+option go_package = "colly";
+
+message Context {
+  map<string, string> Ctx = 1;
+}
+
+message Header {
+  map<string, string> header = 1;
+}
+
+message Request {
+  google.protobuf.Any URL = 1;
+  Header header = 2;
+  Context Ctx = 3;
+  int32 Depth = 4;
+  string method = 5;
+  google.protobuf.Any Body = 6;
+  string ResponseCharacterEncoding = 7;
+  int32 ID = 8;
+  google.protobuf.Any collector = 9;
+  bool abort = 10;
+  google.protobuf.Any baseURL = 11;
+  string proxyURL = 12;
+}
+
+message serializableRequest {
+  string URL = 1;
+  string method = 2;
+  repeated bytes body = 3;
+  int32 ID = 4;
+  Context ctx = 5;
+  Header headers = 6;
+}
+

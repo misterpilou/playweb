@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+//import "google/protobuf/struct.proto";
+
+package colly;
+option go_package = "colly";
+
+//Is it even necessary?
+// message Context {
+//   map<string, string> Ctx = 1;
+// }
+// 
+// //Is it even necessary?
+// message Header {
+//   map<string, string> Header = 1;
+// }
+
+message Response {
+  int32 StatusCode = 1;
+  bytes Body = 2;
+  map<string, Headers> Headers = 5;
+}
+
+message Headers {
+  repeated string Val = 1;
+}
+

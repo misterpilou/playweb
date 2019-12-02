@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package colly;
+option go_package = "colly";
+
+message LimitRule {
+

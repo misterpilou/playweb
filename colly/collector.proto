@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package colly;
+option go_package = "colly";
+
+message Collector {
+  uint32 ID = 1;
+  string UserAgent = 2;
+  int64 MaxDepth = 14;
+  repeated string AllowedDomains = 17;
+  repeated string DisallowedDomains = 31;
+  google.protobuf.Any URLFilters = 32;
+  google.protobuf.Any DisallowedURLFilters = 18;
+  bool AllowURLRevisit = 19;
+  int64 MaxBodySize = 20;
+  string CacheDir = 21;
+  bool IgnoreRobotsTxt = 22;
+  bool Async = 3;
+  bool ParseHTTPErrorResponse = 4;
+  bool DetectCharset = 5;
+  google.protobuf.Any redirectHandler = 6;
+  bool CheckHead = 23;
+  // Probably override with Storage
+  google.protobuf.Any Store = 7;
+  // Probably override with Debug
+  google.protobuf.Any debugger = 8;
+  map<string, google.protobuf.Any> robotsMap = 24;
+  google.protobuf.Any HTMLCallbacks = 25;
+  google.protobuf.Any XMLCallbacks = 26;
+  google.protobuf.Any RequestCallbacks = 27;
+  google.protobuf.Any ResponseCallbacks = 28;
+  google.protobuf.Any ErrorCallback = 29;
+  google.protobuf.Any ScrapedCallback = 30;
+  uint32 requestCount = 9;
+  uint32 responseCount = 10;
+  google.protobuf.Any Backend = 11;
+  google.protobuf.Any wg = 12;
+  google.protobuf.Any lock = 13;
+}
+
