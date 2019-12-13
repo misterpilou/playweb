@@ -11,7 +11,13 @@ import (
 
 	"github.com/misterpilou/playweb/colly"
         "google.golang.org/grpc"
+        // pb "github.com/misterpilou/playweb/colly/response.pb.go"
 )
+
+type parserServer struct {
+    UnimplementedParserServer
+    savedParsed []*Parsed
+}
 
 func main() {
         sig := make(chan os.Signal)

@@ -8,6 +8,7 @@ require (
 	github.com/antchfx/xmlquery v1.0.0
 	github.com/antchfx/xpath v1.0.0 // indirect
 	github.com/gobwas/glob v0.2.3
+	github.com/gocolly/colly v1.2.0
 	github.com/golang/protobuf v1.3.2
 	github.com/jawher/mow.cli v1.1.0
 	github.com/kennygrant/sanitize v1.2.4
