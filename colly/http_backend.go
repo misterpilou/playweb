@@ -28,7 +28,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-        re "github.com/misterpilou/playweb/colly/response.pb.go"
 
 	"compress/gzip"
 	"github.com/gobwas/glob"
@@ -212,26 +211,23 @@ func (h *httpBackend) Do(request *http.Request, bodySize int) (*Response, error)
 		return nil, err
 	}
         //need to return Response
+        headers := &Headers{
+            Val: []string{},
+        }
         response := &Response{
 		StatusCode: int32(res.StatusCode),
 		Body:       body,
+                Headers:    make(map[string]*Headers),
 	}
-        // var HeadersValue Headers
-        // for k, v := range res.Header {
-        //     for _, value := range(v) {
-        //         append(HeadersValue.Value[k], value)
-        //     }
-        // }
-
-        // var ResponseHeaders Response
-        headers = re.Headers()
         i := 0
         for k, v := range res.Header {
             // HeadersValue := response.Headers
             // append(headers.HeadersValue[key], &val)
-            headers.Val.extend(v)
+            val := headers.GetVal()
+            val = v
+            headers.Val = val
             // *headers.HeadersValue[key] += val
-            response.Headers[k] = headers.Value
+            response.Headers[k] = headers
             i++
         }
         

@@ -1,0 +1,11 @@
+{
+  "format_version": "1.1",
+  "package_name": "chromium/third_party/checkstyle",
+  "files": [
+    {
+      "name": "checkstyle-all.jar",
+      "size": 11474389,
+      "hash": "ayeYtX1ryQhXMP5DHvL0Tf-yB2mbJn7pm4a90jcxgH4C"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-//import "google/protobuf/struct.proto";
+// import "google/protobuf/struct.proto";
 
 package colly;
 option go_package = "colly";
@@ -15,6 +15,11 @@ option go_package = "colly";
 //   map<string, string> Header = 1;
 // }
 
+message Parsed {
+  string nexturl = 1;
+  Response res = 2;
+}
+
 message Response {
   int32 StatusCode = 1;
   bytes Body = 2;
@@ -23,5 +28,9 @@ message Response {
 
 message Headers {
   repeated string Val = 1;
+}
+
+service Parser {
+  rpc ParseResponse (Response) returns (Parsed) {}
 }
 

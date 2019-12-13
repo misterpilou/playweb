@@ -48,7 +48,7 @@ func (r *Response) Save(fileName string) error {
 // FileName returns the sanitized file name parsed from "Content-Disposition"
 // header or from URL
 func (r *Response) FileName() string {
-	_, params, err := mime.ParseMediaType(r.Headers.Get("Content-Disposition"))
+	_, params, err := mime.ParseMediaType(r.Headers["Content-Disposition"].GetVal()[0])
 	fName, ok := params["filename"]
         if !ok {
             panic(err)
@@ -74,7 +74,7 @@ func (r *Response) fixCharset(detectCharset bool, defaultEncoding string) error 
 		r.Body = tmpBody
 		return nil
 	}
-	contentType := strings.ToLower(r.Headers.Get("Content-Type"))
+	contentType := strings.ToLower(r.Headers["Content-Type"].GetVal()[0])
 
 	if strings.Contains(contentType, "image/") ||
 		strings.Contains(contentType, "video/") ||

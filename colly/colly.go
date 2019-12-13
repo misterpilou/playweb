@@ -37,6 +37,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+        "net"
 
 	"github.com/PuerkitoBio/goquery"
 	// "github.com/antchfx/htmlquery"
@@ -46,6 +47,8 @@ import (
 	"github.com/kennygrant/sanitize"
 	"github.com/temoto/robotstxt"
 	"google.golang.org/appengine/urlfetch"
+        "google.golang.org/grpc"
+	// proto "github.com/golang/protobuf/proto"
 )
 
 // A CollectorOption sets an option on a Collector.
@@ -116,11 +119,17 @@ type Collector struct {
 	responseCallbacks []ResponseCallback
 	errorCallbacks    []ErrorCallback
 	scrapedCallbacks  []ScrapedCallback
+        jsCallbacks       []JsCallback
 	requestCount      uint32
 	responseCount     uint32
 	backend           *httpBackend
 	wg                *sync.WaitGroup
 	lock              *sync.RWMutex
+}
+
+type parserServer struct {
+    UnimplementedParserServer
+    savedParsed []*Parsed
 }
 
 // RequestCallback is a type alias for OnRequest callback functions
@@ -140,6 +149,9 @@ type ErrorCallback func(*Response, error)
 
 // ScrapedCallback is a type alias for OnScraped callback functions
 type ScrapedCallback func(*Response)
+
+//Send to V8 parser using grpc
+type JsCallback func(*Response)
 
 // ProxyFunc is a type alias for proxy setter functions.
 type ProxyFunc func(*http.Request) (*url.URL, error)
@@ -640,6 +652,11 @@ func (c *Collector) fetch(u, method string, depth int, requestData io.Reader, ct
 		c.handleOnError(response, err, request, ctx)
 	}
 
+        c.handleOnJs(response)
+        // if err != nil {
+        //         c.handleOnError(response, err, request, ctx)
+        // }
+
 	// err = c.handleOnXML(response)
 	// if err != nil {
 	// 	c.handleOnError(response, err, request, ctx)
@@ -774,6 +791,15 @@ func (c *Collector) OnResponse(f ResponseCallback) {
 		c.responseCallbacks = make([]ResponseCallback, 0, 4)
 	}
 	c.responseCallbacks = append(c.responseCallbacks, f)
+	c.lock.Unlock()
+}
+
+func (c *Collector) OnJS(f JsCallback) {
+	c.lock.Lock()
+	if c.responseCallbacks == nil {
+		c.jsCallbacks = make([]JsCallback, 0, 4)
+	}
+	c.jsCallbacks = append(c.jsCallbacks, f)
 	c.lock.Unlock()
 }
 
@@ -965,10 +991,35 @@ func (c *Collector) handleOnResponse(r *Response) {
 	}
 }
 
+func (s *parserServer) ParseResponse(ctx context.Context, res *Response) (*Parsed, error) {
+    // for _, parsed := range s.savedParsed {
+    //     if proto.Equal(parsed.Res, res) {
+    //         return parsed, nil
+    //     }
+    // }
+    //No response found
+    return &Parsed{Nexturl: "", Res: res}, nil
+}
+
+func (c *Collector) handleOnJs(resp *Response) {
+    lis, err := net.Listen("tcp", fmt.Sprintf(":%d", "50017"))
+    if err != nil {
+        log.Fatalf("failed to listen: %v", err)
+    }
+    grpcServer := grpc.NewServer()
+    RegisterParserServer(grpcServer, &parserServer{})
+    //determine whether to use TLS
+    grpcServer.Serve(lis)
+    if err != nil {
+        log.Fatalf("Error: %v", err)
+    }
+}
+
 func (c *Collector) handleOnHTML(resp *Response) error {
-	if len(c.htmlCallbacks) == 0 || !strings.Contains(strings.ToLower(resp.Headers.Get("Content-Type")), "html") {
-		return nil
-	}
+	// if len(c.htmlCallbacks) == 0 || !strings.Contains(strings.ToLower(resp.Headers["Content-Type"].GetVal()[0]), "html") {
+        //         fmt.Println("debug")
+	// 	return nil
+	// }
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(resp.Body))
 	if err != nil {
 		return err
@@ -986,12 +1037,13 @@ func (c *Collector) handleOnHTML(resp *Response) error {
 				e := NewHTMLElementFromSelectionNode(nexturl, s, n, i)
 				i++
 				// if c.debugger != nil {
-				// 	c.debugger.Event(createEvent("html", resp.Request.ID, c.ID, map[string]string{
-				// 		"selector": cc.Selector,
-                                //                 // Replace in favor of url
-				// 		//"url":      resp.Request.URL.String(),
-                                //                 "url": nexturl.String(),
-				// 	}))
+                                        //Remove Request ID from Event constructor
+					// c.debugger.Event(createEvent("html", resp.Request.ID, c.ID, map[string]string{
+					// 	"selector": cc.Selector,
+                                        //         // Replace in favor of url
+					// 	//"url":      resp.Request.URL.String(),
+                                        //         "url": nexturl.String(),
+					// }))
 				// }
 				cc.Function(e)
 			}

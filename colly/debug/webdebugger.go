@@ -37,7 +37,6 @@ type requestInfo struct {
 	Started        time.Time
 	Duration       time.Duration
 	ResponseStatus string
-	ID             uint32
 	CollectorID    uint32
 }
 
@@ -71,7 +70,6 @@ func (w *WebDebugger) Event(e *Event) {
 		w.CurrentRequests[e.RequestID] = requestInfo{
 			URL:         e.Values["url"],
 			Started:     time.Now(),
-			ID:          e.RequestID,
 			CollectorID: e.CollectorID,
 		}
 	case "response", "error":
