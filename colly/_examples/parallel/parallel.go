@@ -11,13 +11,16 @@ import (
 
 	"github.com/misterpilou/playweb/colly"
         "google.golang.org/grpc"
-        // pb "github.com/misterpilou/playweb/colly/response.pb.go"
 )
 
 type parserServer struct {
-    UnimplementedParserServer
-    savedParsed []*Parsed
+    colly.UnimplementedParserServer
+    savedParsed []*colly.Parsed
 }
+
+// const (
+//     port = "127.0.0.1:50051"
+// )
 
 func main() {
         sig := make(chan os.Signal)
@@ -42,17 +45,6 @@ func main() {
         i := 0
         j := 0
             
-        lis, err := net.Listen("tcp", fmt.Sprintf(":%d", "50017"))
-        if err != nil {
-            log.Fatalf("failed to listen: %v", err)
-        }
-        grpcServer := grpc.NewServer()
-        RegisterParserServer(grpcServer, &parserServer{})
-        //determine whether to use TLS
-        grpcServer.Serve(lis)
-        if err != nil {
-            log.Fatalf(err)
-        }
 
         c.OnResponse(func(res *colly.Response) {
             //fmt.Println(string(res.Body))
@@ -86,4 +78,15 @@ func main() {
             os.Exit(1)
         }()
 	c.Wait()
+        lis, err := net.Listen("tcp4", ":50017")
+        if err != nil {
+            log.Fatalf("failed to listen: %v", err)
+        }
+        grpcServer := grpc.NewServer()
+        colly.RegisterParserServer(grpcServer, &parserServer{})
+        //determine whether to use TLS
+        grpcServer.Serve(lis)
+        if err != nil {
+            log.Fatalf("Error: %v", err)
+        }
 }

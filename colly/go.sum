@@ -44,6 +44,7 @@ github.com/kennygrant/sanitize v1.2.4 h1:gN25/otpP5vAsO2djbMhF/LQX6R7+O1TB4yv8Nz
 github.com/kennygrant/sanitize v1.2.4/go.mod h1:LGsjYYtgxbetdg5owWB2mpgUL6e2nfw2eObZ0u0qvak=
 github.com/misterpilou/playweb v0.0.0-20190408075520-0fb37a101850 h1:m/2S6vxn02XqqKhI5ptz9iF5pvGF73rrfsyH6pz2vwk=
 github.com/misterpilou/playweb v0.0.0-20191202122559-aedfacd527b2 h1:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+github.com/misterpilou/playweb v0.0.0-20191213170209-022db4da493a h1:lFrW0QeCTh+jNwrucc09tvTc5r+JZ/byw0rsxQGsi6A=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca h1:NugYot0LIVPxTvN8n+Kvkn6TrbMyxQiuvKdEwFdR9vI=
